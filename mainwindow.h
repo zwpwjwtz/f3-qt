@@ -16,6 +16,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    void on_cui_status_changed(f3_launcher_status status);
 
 private slots:
     void on_buttonCheck_clicked();
