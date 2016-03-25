@@ -20,3 +20,8 @@ HEADERS  += mainwindow.h \
     f3_launcher.h
 
 FORMS    += mainwindow.ui
+
+DISTFILES +=
+
+RESOURCES += \
+    icon.qrc
