@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QDesktopWidget>
 #include <QMessageBox>
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -12,6 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
             this,
             SLOT(on_cui_status_changed(f3_launcher_status)));
     checking = false;
+    move((QApplication::desktop()->width() - this->width()) / 2,
+         (QApplication::desktop()->width() - this->width()) / 2);
 }
 
 MainWindow::~MainWindow()
@@ -77,9 +81,26 @@ void MainWindow::on_buttonCheck_clicked()
     }
 }
 
-void MainWindow::on_buttonExit_clicked()
+void MainWindow::closeEvent(QCloseEvent* event)
 {
     if (checking)
         cui.stopCheck();
+}
+
+void MainWindow::on_buttonExit_clicked()
+{
+    if (checking)
+    {
+        cui.stopCheck();
+        checking = false;
+    }
     this->close();
+}
+
+void MainWindow::on_buttonSelectPath_clicked()
+{
+    QString path = QFileDialog::getExistingDirectory(this,"Choose Device Path");
+    if (!path.isEmpty())
+        ui->textDevPath->setText(path);
+
 }

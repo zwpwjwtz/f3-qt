@@ -23,12 +23,17 @@ private slots:
     void on_buttonCheck_clicked();
     void on_buttonExit_clicked();
 
+    void on_buttonSelectPath_clicked();
+
 private:
     Ui::MainWindow *ui;
     f3_launcher cui;
     bool checking;
 
     void showStatus(const QString& string);
+
+protected:
+    void closeEvent(QCloseEvent *);
 };
 
 #endif // MAINWINDOW_H
