@@ -31,6 +31,7 @@ private:
     bool checking;
 
     void showStatus(const QString& string);
+    void clearStatus();
 
 protected:
     void closeEvent(QCloseEvent *);
