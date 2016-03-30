@@ -37,7 +37,6 @@ void MainWindow::clearStatus()
     ui->labelSpace->clear();
     ui->labelSpeed->clear();
     ui->progressBar->setValue(0);
-    ui->progressBar->setTextVisible(false);
 }
 
 void MainWindow::on_cui_status_changed(f3_launcher_status status)
@@ -68,11 +67,16 @@ void MainWindow::on_cui_status_changed(f3_launcher_status status)
                                     .append(report.WritingSpeed)
                                     );
             ui->progressBar->setValue(report.availability * 100);
-            ui->progressBar->setTextVisible(true);
             break;
         }
         case f3_launcher_stopped:
             showStatus("Stopped.");
+            break;
+        case f3_launcher_staged:
+            ui->progressBar->setValue(0);
+            break;
+        case f3_launcher_progressed:
+            ui->progressBar->setValue(cui.progress);
             break;
         case f3_launcher_path_incorrect:
             QMessageBox::critical(this,"Path error",

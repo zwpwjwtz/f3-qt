@@ -1,6 +1,16 @@
 #include "f3_launcher.h"
 #include <QtMath>
 
+#define F3_READ_COMMAND "f3read"
+#define F3_WRITE_COMMAND "f3write"
+#define F3_OPTION_SHOW_PROGRESS "--show-progress=1"
+
+#define F3_RESULT_TAG_READ_SPEED "Average reading speed:"
+#define F3_RESULT_TAG_WRITE_SPEED "Average writing speed:"
+#define F3_RESULT_TAG_SPACE_FREE "Free space:"
+#define F3_RESULT_TAG_SPACE_OK "Data OK:"
+#define F3_RESULT_TAG_SPACE_LOST "Data LOST:"
+
 QString f3_get_line_result(const QString& str,const QString& testString)
 {
     int p1 = str.indexOf(testString);
@@ -50,6 +60,12 @@ f3_launcher::f3_launcher()
             SIGNAL(finished(int,QProcess::ExitStatus)),
             this,
             SLOT(on_f3_cui_finished()));
+    connect(&timer,
+            SIGNAL(timeout()),
+            this,
+            SLOT(on_timer_timeout()));
+    timer.setInterval(1500);
+
 }
 
 f3_launcher::~f3_launcher()
@@ -67,7 +83,10 @@ void f3_launcher::startCheck(QString& devPath)
     emit f3_launcher_status_changed(f3_launcher_running);
 
     this->devPath = devPath;
-    f3_cui.start(QString("f3write ").append(devPath));
+    QStringList args;
+    args << QString(F3_OPTION_SHOW_PROGRESS) << devPath;
+    f3_cui.start(QString(F3_WRITE_COMMAND),args);
+    timer.start();
 }
 
 void f3_launcher::stopCheck()
@@ -84,24 +103,24 @@ f3_launcher_report f3_launcher::getReport()
     if (f3_cui_output.trimmed().isEmpty())
         return report;
 
-    if (f3_cui_output.indexOf("Average reading speed:"))
+    if (f3_cui_output.indexOf(F3_RESULT_TAG_READ_SPEED))
         report.success = true;
 
-    report.ReportedFree = f3_get_line_result(f3_cui_output,"Free space:");
+    report.ReportedFree = f3_get_line_result(f3_cui_output,F3_RESULT_TAG_SPACE_FREE);
 
-    report.ActualFree = f3_get_line_result(f3_cui_output,"Data OK:");
+    report.ActualFree = f3_get_line_result(f3_cui_output,F3_RESULT_TAG_SPACE_OK);
     report.ActualFree.truncate(report.ActualFree.indexOf(" ("));
 
-    report.LostSpace = f3_get_line_result(f3_cui_output,"Data LOST:");
+    report.LostSpace = f3_get_line_result(f3_cui_output,F3_RESULT_TAG_SPACE_LOST);
     report.LostSpace.truncate(report.LostSpace.indexOf(" ("));
 
     report.availability = f3_capacity_ratio(report.ActualFree, report.ReportedFree);
 
-    report.ReadingSpeed = f3_get_line_result(f3_cui_output,"Average reading speed:");
+    report.ReadingSpeed = f3_get_line_result(f3_cui_output,F3_RESULT_TAG_READ_SPEED);
     if (report.ReadingSpeed.isEmpty())
         report.ReadingSpeed = "(N/A)";
 
-    report.WritingSpeed = f3_get_line_result(f3_cui_output,"Average writing speed:");
+    report.WritingSpeed = f3_get_line_result(f3_cui_output,F3_RESULT_TAG_WRITE_SPEED);
     if (report.WritingSpeed.isEmpty())
         report.WritingSpeed = "(N/A)";
     return report;
@@ -147,18 +166,39 @@ void f3_launcher::on_f3_cui_finished()
         return;
     else if (stage == 1)
     {
+        timer.stop();
         if (parseOutput() != 0)
         {
             stage = 0;
             return;
         }
         stage = 2;
-        f3_cui.start(QString("f3read ").append(devPath));
+        QStringList args;
+        args << QString(F3_OPTION_SHOW_PROGRESS) << devPath;
+        f3_cui.start(QString(F3_READ_COMMAND),args);
+        emit f3_launcher_status_changed(f3_launcher_staged);
+        timer.start();
     }
     else
     {
+        timer.stop();
         stage = 0;
         if (parseOutput() == 0)
             emit f3_launcher_status_changed(f3_launcher_finished);
     }
+}
+
+void f3_launcher::on_timer_timeout()
+{
+    QString temp = f3_cui.readAllStandardOutput();
+    if (temp.isEmpty()) return;
+    temp.remove(QChar('\b'));
+    int p = temp.indexOf("% --");
+    if (p >= 0)
+    {
+        int p2 = temp.indexOf("... ", p - 7);
+        progress = temp.mid(p2 + 4, p - p2 - 4).trimmed().toFloat();
+        emit f3_launcher_status_changed(f3_launcher_progressed);
+    }
+    f3_cui_output.append(temp);
 }
