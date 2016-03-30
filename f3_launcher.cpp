@@ -80,6 +80,7 @@ void f3_launcher::startCheck(QString& devPath)
 
     f3_cui_output.clear();
     stage = 1;
+    progress = 0;
     emit f3_launcher_status_changed(f3_launcher_running);
 
     this->devPath = devPath;
@@ -124,6 +125,11 @@ f3_launcher_report f3_launcher::getReport()
     if (report.WritingSpeed.isEmpty())
         report.WritingSpeed = "(N/A)";
     return report;
+}
+
+int f3_launcher::getStage()
+{
+    return stage;
 }
 
 int f3_launcher::parseOutput()
@@ -173,6 +179,7 @@ void f3_launcher::on_f3_cui_finished()
             return;
         }
         stage = 2;
+        progress = 0;
         QStringList args;
         args << QString(F3_OPTION_SHOW_PROGRESS) << devPath;
         f3_cui.start(QString(F3_READ_COMMAND),args);
@@ -197,7 +204,9 @@ void f3_launcher::on_timer_timeout()
     if (p >= 0)
     {
         int p2 = temp.indexOf("... ", p - 7);
-        progress = temp.mid(p2 + 4, p - p2 - 4).trimmed().toFloat();
+        int percentage = temp.mid(p2 + 4, p - p2 - 4).trimmed().toFloat();
+        if (percentage > progress)
+            progress = percentage;
         emit f3_launcher_status_changed(f3_launcher_progressed);
     }
     f3_cui_output.append(temp);

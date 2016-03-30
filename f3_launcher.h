@@ -41,6 +41,7 @@ public:
     void startCheck(QString& devPath);
     void stopCheck();
     f3_launcher_report getReport();
+    int getStage();
     QString f3_cui_output;
     int progress;
 

@@ -14,6 +14,10 @@ MainWindow::MainWindow(QWidget *parent) :
             SIGNAL(f3_launcher_status_changed(f3_launcher_status)),
             this,
             SLOT(on_cui_status_changed(f3_launcher_status)));
+    connect(&timer,
+            SIGNAL(timeout()),
+            this,
+            SLOT(on_timer_timeout()));
     checking = false;
     move((QApplication::desktop()->width() - width()) / 2,
          (QApplication::desktop()->width() - width()) / 2);
@@ -34,9 +38,21 @@ void MainWindow::showStatus(const QString &string)
 void MainWindow::clearStatus()
 {
     ui->statusBar->showMessage("Ready");
+    ui->frameResult->hide();
     ui->labelSpace->clear();
     ui->labelSpeed->clear();
     ui->progressBar->setValue(0);
+    ui->progressBar->move(20,40);
+    ui->labelProgress->setText("Progress:");
+    ui->labelProgress->show();
+}
+
+void MainWindow::showCapacity(int value)
+{
+    timerTarget = value;
+    ui->progressBar->setValue(0);
+    timer.setInterval(1000 / value);
+    timer.start();
 }
 
 void MainWindow::on_cui_status_changed(f3_launcher_status status)
@@ -66,15 +82,23 @@ void MainWindow::on_cui_status_changed(f3_launcher_status status)
                                     .append("\nWrite speed: ")
                                     .append(report.WritingSpeed)
                                     );
-            ui->progressBar->setValue(report.availability * 100);
+            ui->frameResult->show();
+            ui->labelProgress->hide();
+            ui->progressBar->move(20,5);
+            showCapacity(report.availability * 100);
             break;
         }
         case f3_launcher_stopped:
             showStatus("Stopped.");
             break;
         case f3_launcher_staged:
+        {
+            QString progressText;
+            progressText.sprintf("Progress:(Stage %d)",cui.getStage());
+            ui->labelProgress->setText(progressText);
             ui->progressBar->setValue(0);
             break;
+        }
         case f3_launcher_progressed:
             ui->progressBar->setValue(cui.progress);
             break;
@@ -104,7 +128,9 @@ void MainWindow::on_cui_status_changed(f3_launcher_status status)
         default:
             showStatus("An error occurred.");
     }
-    if (status == f3_launcher_running)
+    if (status == f3_launcher_running ||
+        status == f3_launcher_staged ||
+        status == f3_launcher_progressed)
     {
         checking = true;
         ui->buttonCheck->setText("Stop");
@@ -164,4 +190,17 @@ void MainWindow::on_buttonSelectPath_clicked()
     if (!path.isEmpty())
         ui->textDevPath->setText(path);
 
+}
+
+void MainWindow::on_timer_timeout()
+{
+    int value = ui->progressBar->value();
+    if (value < timerTarget)
+    {
+        ui->progressBar->setValue(++value);
+    }
+    else
+    {
+        timer.stop();
+    }
 }

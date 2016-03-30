@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTimer>
 #include "f3_launcher.h"
 
 namespace Ui {
@@ -22,16 +23,19 @@ public slots:
 private slots:
     void on_buttonCheck_clicked();
     void on_buttonExit_clicked();
-
     void on_buttonSelectPath_clicked();
+    void on_timer_timeout();
 
 private:
     Ui::MainWindow *ui;
     f3_launcher cui;
+    QTimer timer;
     bool checking;
+    int timerTarget;
 
     void showStatus(const QString& string);
     void clearStatus();
+    void showCapacity(int value);
 
 protected:
     void closeEvent(QCloseEvent *);

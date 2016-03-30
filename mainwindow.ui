@@ -80,16 +80,6 @@
      <string>...</string>
     </property>
    </widget>
-   <widget class="QProgressBar" name="progressBar">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>110</y>
-      <width>331</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QFrame" name="frameResult">
     <property name="geometry">
      <rect>
@@ -145,6 +135,55 @@
      </property>
     </widget>
    </widget>
+   <widget class="QFrame" name="frameProgress">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>110</y>
+      <width>351</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <property name="lineWidth">
+     <number>0</number>
+    </property>
+    <widget class="QLabel" name="labelProgress">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>331</width>
+       <height>18</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Progress:</string>
+     </property>
+    </widget>
+    <widget class="QProgressBar" name="progressBar">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>40</y>
+       <width>321</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+   <zorder>frameProgress</zorder>
+   <zorder>buttonCheck</zorder>
+   <zorder>buttonExit</zorder>
+   <zorder>textDevPath</zorder>
+   <zorder>labelPrompt</zorder>
+   <zorder>buttonSelectPath</zorder>
+   <zorder>frameResult</zorder>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
