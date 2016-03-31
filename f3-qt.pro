@@ -11,15 +11,25 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = f3-qt
 TEMPLATE = app
 
+VER_MAJ = 1
+VER_MIN = 0
+VER_PAT = 0
+VERSION = 1.0.0
+VERSION_PE_HEADER = 1.0.0
+
+DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    f3_launcher.cpp
+    f3_launcher.cpp \
+    helpwindow.cpp
 
 HEADERS  += mainwindow.h \
-    f3_launcher.h
+    f3_launcher.h \
+    helpwindow.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    helpwindow.ui
 
 DISTFILES +=
 

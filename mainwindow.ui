@@ -177,6 +177,32 @@
      </property>
     </widget>
    </widget>
+   <widget class="QPushButton" name="buttonHelp">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>0</y>
+      <width>30</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="icon.qrc">
+      <normaloff>:/icon/help.png</normaloff>:/icon/help.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>30</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
+    </property>
+   </widget>
    <zorder>frameProgress</zorder>
    <zorder>buttonCheck</zorder>
    <zorder>buttonExit</zorder>
@@ -184,6 +210,7 @@
    <zorder>labelPrompt</zorder>
    <zorder>buttonSelectPath</zorder>
    <zorder>frameResult</zorder>
+   <zorder>buttonHelp</zorder>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>

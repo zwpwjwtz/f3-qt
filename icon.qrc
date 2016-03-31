@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/icon">
         <file>f3.png</file>
+        <file>help.png</file>
     </qresource>
 </RCC>

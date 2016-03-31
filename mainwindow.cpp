@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "helpwindow.h"
 #include <QDesktopWidget>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -51,6 +52,8 @@ void MainWindow::showCapacity(int value)
 {
     timerTarget = value;
     ui->progressBar->setValue(0);
+    if (value <= 0)
+        return;
     timer.setInterval(1000 / value);
     timer.start();
 }
@@ -168,10 +171,14 @@ void MainWindow::closeEvent(QCloseEvent* event)
     {
         if (QMessageBox::question(this,"Quit F3","The program is still running a check.\n"
             "Quit anyway?",QMessageBox::Yes,QMessageBox::No) != QMessageBox::Yes)
+        {
             event->ignore();
+            return;
+        }
         else
             cui.stopCheck();
     }
+    help.close();
 }
 
 void MainWindow::on_buttonExit_clicked()
@@ -203,4 +210,9 @@ void MainWindow::on_timer_timeout()
     {
         timer.stop();
     }
+}
+
+void MainWindow::on_buttonHelp_clicked()
+{
+    help.show();
 }

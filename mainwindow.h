@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QTimer>
 #include "f3_launcher.h"
+#include "helpwindow.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,12 +25,14 @@ private slots:
     void on_buttonCheck_clicked();
     void on_buttonExit_clicked();
     void on_buttonSelectPath_clicked();
+    void on_buttonHelp_clicked();
     void on_timer_timeout();
 
 private:
     Ui::MainWindow *ui;
     f3_launcher cui;
     QTimer timer;
+    HelpWindow help;
     bool checking;
     int timerTarget;
 
