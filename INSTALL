@@ -1,0 +1,39 @@
+How To Build And Install
+========================
+
+Build
+-----
+
+There are 2 ways to build from source:
+
+* Using QtCreator:
+
+  1. Download and install the latest version of QtCreator;
+    
+  2. Open "f3-qt.pro" with QtCreator;
+    
+  3. Compile the project.
+
+* Using qmake:
+
+  1. Download and install qmake. There might be other dependencies needed for qmake. For example, under Ubuntu you can:
+
+            sudo apt-get install g++
+            sudo apt-get install qt5-default
+
+  2. Switch to the source directory and run qmake:
+    
+            cd f3-qt/
+            qmake
+    
+  3. Actually build the project:
+    
+            make
+        
+
+Install
+-------
+
+The built executable "f3-qt" can be launched directly (either from terminal or file manager), without further configuration of environmental variables.
+
+**To make the program function properly, you need also install the latest version of f3.**
