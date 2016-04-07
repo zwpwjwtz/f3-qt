@@ -7,6 +7,7 @@ HelpWindow::HelpWindow(QWidget *parent) :
     ui(new Ui::HelpWindow)
 {
     ui->setupUi(this);
+    setFixedSize(width(), height());
     ui->labelVersion->setText(QString("Ver: ").append(APP_VERSION));
     ui->textAbout->setText("This program is a free software.\n\n"
                     "You can redistribute it and/or modify it under the terms of"
@@ -17,8 +18,9 @@ HelpWindow::HelpWindow(QWidget *parent) :
                     "ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or "
                     "FITNESS FOR A PARTICULAR PURPOSE. See the GNU Library General Public License "
                     "for more details.\n");
-    ui->labelContact->setText("<p>GUI Author: <a href=\"mailto:zwpwjwtz@163.com\">Tianze Wang</a></p>"
-                    "<p>Author of F3: <a href=\"mailto:michel@digirati.com.br\">Michel Machado</a></p>"
+    ui->labelContact->setText("<p>GUI Author: Tianze Wang &lt;<a href=\"mailto:zwpwjwtz@126.com\">zwpwjwtz@126.com</a>&gt;</p>"
+                    "<p>Author of F3: Michel Machado &lt;<a href=\"mailto:michel@digirati.com.br\">michel@digirati.com.br</a>&gt;</p>"
+                    "<p>Project Home: <a href=\"https://github.com/zwpwjwtz/f3-qt\">Github</a>"
                     "<p align=\"center\">Feel free to report bugs and give suggestions!</p>");
 }
 

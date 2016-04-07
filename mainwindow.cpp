@@ -43,7 +43,7 @@ void MainWindow::clearStatus()
     ui->labelSpace->clear();
     ui->labelSpeed->clear();
     ui->progressBar->setValue(0);
-    ui->progressBar->move(20,40);
+    ui->progressBar->move(20,50);
     ui->labelProgress->setText("Progress:");
     ui->labelProgress->show();
 }
@@ -87,7 +87,7 @@ void MainWindow::on_cui_status_changed(f3_launcher_status status)
                                     );
             ui->frameResult->show();
             ui->labelProgress->hide();
-            ui->progressBar->move(20,5);
+            ui->progressBar->move(20,7);
             showCapacity(report.availability * 100);
             break;
         }
