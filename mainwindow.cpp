@@ -10,6 +10,20 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    f3_launcher_status cui_status = cui.getStatus();
+    if (cui_status == f3_launcher_no_cui)
+    {
+        QMessageBox::critical(this,"No f3 program",
+                              "Cannot found f3read/f3write.\n"
+                              "Please install f3 first.");
+        exit(0);
+    }
+    else if (cui_status == f3_launcher_no_progress)
+    {
+        QMessageBox::warning(this,"No progress showing",
+                             "You are using an old version of f3read/f3write.\n"
+                             "The progress will not be shown during checking.");
+    }
     ui->setupUi(this);
     connect(&cui,
             SIGNAL(f3_launcher_status_changed(f3_launcher_status)),
@@ -109,12 +123,6 @@ void MainWindow::on_cui_status_changed(f3_launcher_status status)
             QMessageBox::critical(this,"Path error",
                                   "Device path not found.\n"
                                   "Please try mounting it correctly.");
-            break;
-        case f3_launcher_no_cui:
-            QMessageBox::critical(this,"No f3 program",
-                                  "Cannot found f3read/f3write.\n"
-                                  "Please install f3 first.");
-            showStatus("No enough space for test.");
             break;
         case f3_launcher_no_permission:
             QMessageBox::warning(this,"Permission denied",

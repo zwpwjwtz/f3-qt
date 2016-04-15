@@ -5,6 +5,9 @@
 #define F3_WRITE_COMMAND "f3write"
 #define F3_OPTION_SHOW_PROGRESS "--show-progress=1"
 
+#define F3_VERSION_TAG1 "Copyright (C)"
+#define F3_VERSION_TAG2 "F3 read"
+
 #define F3_RESULT_TAG_READ_SPEED "Average reading speed:"
 #define F3_RESULT_TAG_WRITE_SPEED "Average writing speed:"
 #define F3_RESULT_TAG_SPACE_FREE "Free space:"
@@ -55,6 +58,22 @@ float f3_capacity_ratio(const QString& numerator, const QString& denominator)
 
 f3_launcher::f3_launcher()
 {
+    float version = probeVersion();
+    if (version == 0)
+    {
+        status = f3_launcher_no_cui;
+        return;
+    }
+    else if (version <= 6.0)
+    {
+        status = f3_launcher_no_progress;
+        showProgress = false;
+    }
+    else
+    {
+        status = f3_launcher_ready;
+        showProgress = true;
+    }
     stage = 0;
     connect(&f3_cui,
             SIGNAL(finished(int,QProcess::ExitStatus)),
@@ -73,6 +92,11 @@ f3_launcher::~f3_launcher()
     f3_cui.terminate();
 }
 
+f3_launcher_status f3_launcher::getStatus()
+{
+    return status;
+}
+
 void f3_launcher::startCheck(QString& devPath)
 {
     if (stage != 0)
@@ -81,13 +105,20 @@ void f3_launcher::startCheck(QString& devPath)
     f3_cui_output.clear();
     stage = 1;
     progress = 0;
+    status = f3_launcher_running;
     emit f3_launcher_status_changed(f3_launcher_running);
 
     this->devPath = devPath;
     QStringList args;
-    args << QString(F3_OPTION_SHOW_PROGRESS) << devPath;
+    if (showProgress)
+        args << QString(F3_OPTION_SHOW_PROGRESS);
+    args << devPath;
     f3_cui.start(QString(F3_WRITE_COMMAND),args);
-    timer.start();
+
+    if (showProgress)
+    {
+        timer.start();
+    }
 }
 
 void f3_launcher::stopCheck()
@@ -132,6 +163,27 @@ int f3_launcher::getStage()
     return stage;
 }
 
+float f3_launcher::probeVersion()
+{
+    f3_cui.start(F3_READ_COMMAND);
+    f3_cui.waitForStarted();
+    f3_cui.waitForFinished();
+    if (f3_cui.exitCode() == 255)
+        return 0;
+
+    QString output = f3_cui.readAllStandardError();
+    int p = output.indexOf(F3_VERSION_TAG1);
+    if (p > 0)
+    {
+        return f3_get_line_result(output,F3_VERSION_TAG2).toFloat();
+    }
+    else
+    {
+        return 6.1;
+    }
+
+}
+
 int f3_launcher::parseOutput()
 {
     int exitCode = f3_cui.exitCode();
@@ -156,9 +208,6 @@ int f3_launcher::parseOutput()
         case 143:   //Terminated by other process
             emit f3_launcher_status_changed(f3_launcher_stopped);
             break;
-        case 127:   //Command not found
-            emit f3_launcher_status_changed(f3_launcher_no_cui);
-            break;
         default:
             f3_cui_output = QString("Error:\n").append(f3_cui.readAllStandardError());
             emit f3_launcher_status_changed(f3_launcher_unknownError);
@@ -178,20 +227,35 @@ void f3_launcher::on_f3_cui_finished()
             stage = 0;
             return;
         }
+
         stage = 2;
         progress = 0;
         QStringList args;
-        args << QString(F3_OPTION_SHOW_PROGRESS) << devPath;
+        if (showProgress)
+            args << QString(F3_OPTION_SHOW_PROGRESS);
+        args << devPath;
         f3_cui.start(QString(F3_READ_COMMAND),args);
         emit f3_launcher_status_changed(f3_launcher_staged);
-        timer.start();
+
+        if (showProgress)
+        {
+            timer.start();
+        }
     }
     else
     {
         timer.stop();
         stage = 0;
+
         if (parseOutput() == 0)
+        {
             emit f3_launcher_status_changed(f3_launcher_finished);
+            status = f3_launcher_finished;
+        }
+        else
+        {
+            status = f3_launcher_stopped;
+        }
     }
 }
 

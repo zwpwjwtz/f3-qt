@@ -12,6 +12,7 @@ enum f3_launcher_status
     f3_launcher_stopped = 3,
     f3_launcher_staged = 4,
     f3_launcher_progressed = 5,
+    f3_launcher_no_progress = 6,
     f3_launcher_path_incorrect = 128,
     f3_launcher_no_cui = 129,
     f3_launcher_no_permission = 130,
@@ -38,6 +39,7 @@ class f3_launcher : public QObject
 public:
     f3_launcher();
     ~f3_launcher();
+    f3_launcher_status getStatus();
     void startCheck(QString& devPath);
     void stopCheck();
     f3_launcher_report getReport();
@@ -50,9 +52,12 @@ signals:
 
 private:
     QProcess f3_cui;
+    f3_launcher_status status;
+    bool showProgress;
     QString devPath;
     int stage;
     QTimer timer;
+    float probeVersion();
     int parseOutput();
 
 private slots:
