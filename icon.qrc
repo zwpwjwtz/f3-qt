@@ -2,5 +2,8 @@
     <qresource prefix="/icon">
         <file>f3.png</file>
         <file>help.png</file>
+        <file>advanced.png</file>
+        <file>back.png</file>
+        <file>close.png</file>
     </qresource>
 </RCC>
