@@ -124,6 +124,28 @@ bool MainWindow::unmountDisk(const QString& mountPoint)
         return false;
 }
 
+bool MainWindow::sureToExit(bool manualClose)
+{
+    if (!manualClose)
+        if (QMessageBox::question(this,"Quit F3",
+                              "The program is still running a check.\n"
+                              "Quit anyway?",
+                              QMessageBox::Yes | QMessageBox::No,
+                              QMessageBox::No) != QMessageBox::Yes)
+            return false;
+    if (userMode == 1 && ui->optionDestructive->isChecked() == false)
+    {
+        if (QMessageBox::warning(this,"Quit F3",
+                              "You are going to abort this test.\n"
+                              "Quit now will cause PERMANENT DATA LOSS!\n"
+                              "Do you really want to quit?",
+                              QMessageBox::Yes | QMessageBox::No,
+                              QMessageBox::No) != QMessageBox::Yes)
+            return false;
+    }
+    return true;
+}
+
 void MainWindow::on_cui_status_changed(f3_launcher_status status)
 {
     switch(status)
@@ -342,27 +364,23 @@ void MainWindow::on_buttonCheck_clicked()
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-    if (checking)
+    if (!checking)
+        return;
+    if (sureToExit(false))
     {
-        if (QMessageBox::question(this,"Quit F3",
-                                  "The program is still running a check.\n"
-                                  "Quit anyway?",
-                                  QMessageBox::Yes | QMessageBox::No,
-                                  QMessageBox::No) != QMessageBox::Yes)
-        {
-            event->ignore();
-            return;
-        }
-        else
-            cui.stopCheck();
+        cui.stopCheck();
+        help.close();
     }
-    help.close();
+    else
+        event->ignore();
 }
 
 void MainWindow::on_buttonExit_clicked()
 {
     if (checking)
     {
+        if (!sureToExit(true))
+            return;
         cui.stopCheck();
         checking = false;
     }

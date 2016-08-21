@@ -32,7 +32,6 @@ private slots:
     void on_optionQuickTest_clicked();
     void on_optionLessMem_clicked();
     void on_optionDestructive_clicked();
-
     void on_buttonMode_2_clicked();
 
 private:
@@ -50,6 +49,7 @@ private:
     void showCapacity(int value);
     QString mountDisk(const QString& device);
     bool unmountDisk(const QString& mountPoint);
+    bool sureToExit(bool manualClose);
 
 protected:
     void closeEvent(QCloseEvent *);
