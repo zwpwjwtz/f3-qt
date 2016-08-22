@@ -28,6 +28,9 @@ enum f3_launcher_error_code
     f3_launcher_not_directory = 136,
     f3_launcher_not_disk = 137,
     f3_launcher_not_USB = 138,
+    f3_launcher_no_fix = 139,
+    f3_launcher_no_report = 140,
+    f3_launcher_oversize = 141,
     f3_launcher_unknownError = 255,
 };
 
@@ -60,6 +63,7 @@ public:
     int getStage();
     bool setOption(QString key, QString value);
     QString getOption(QString key);
+    void startFix();
     QString f3_cui_output;
     int progress;
 

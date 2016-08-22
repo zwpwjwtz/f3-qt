@@ -133,7 +133,8 @@ bool MainWindow::sureToExit(bool manualClose)
                               QMessageBox::Yes | QMessageBox::No,
                               QMessageBox::No) != QMessageBox::Yes)
             return false;
-    if (userMode == 1 && ui->optionDestructive->isChecked() == false)
+    if (userMode == 1 && ui->optionQuickTest->isChecked()
+                      && ui->optionDestructive->isChecked() == false)
     {
         if (QMessageBox::warning(this,"Quit F3",
                               "You are going to abort this test.\n"
@@ -146,6 +147,24 @@ bool MainWindow::sureToExit(bool manualClose)
     return true;
 }
 
+void MainWindow::promptFix()
+{
+    if (QMessageBox::question(this, "Wrong Capacity Detected",
+                              "This device does not have the capacity it claims.\n"
+                              "Would you like to fix it?",
+                              QMessageBox::Yes | QMessageBox::No,
+                              QMessageBox::Yes) != QMessageBox::Yes)
+        return;
+    if (QMessageBox::warning(this,"Fix Capacity",
+                          "You are going to fix the capacity of this disk.\n"
+                          "All data on this disk will be LOST!\n"
+                          "Are you sure to continue?",
+                          QMessageBox::Yes | QMessageBox::No,
+                          QMessageBox::No) != QMessageBox::Yes)
+        return;
+    cui.startFix();
+}
+
 void MainWindow::on_cui_status_changed(f3_launcher_status status)
 {
     switch(status)
@@ -156,6 +175,10 @@ void MainWindow::on_cui_status_changed(f3_launcher_status status)
         case f3_launcher_running:
             showStatus("Checking... Please wait...");
             ui->buttonMode->setEnabled(false);
+            ui->textDev->setReadOnly(true);
+            ui->textDevPath->setReadOnly(true);
+            ui->buttonSelectDev->setEnabled(false);
+            ui->buttonSelectPath->setEnabled(false);
             ui->groupProgress->show();
             break;
         case f3_launcher_finished:
@@ -165,6 +188,13 @@ void MainWindow::on_cui_status_changed(f3_launcher_status status)
                 showStatus("Finished (without error).");
             else
                 showStatus("Finished.");
+            if (report.ReportedFree == "(Fixed)")
+            {
+                QMessageBox::information(this,"Fixed successfully",
+                                         "The capacity of the partition of the disk\n"
+                                         "has been adjusted to what it should be.");
+                break;
+            }
             f3_qt_fillReport(report);
             ui->labelSpace->setText(QString("Free Space: ")
                                     .append(report.ReportedFree)
@@ -218,7 +248,10 @@ void MainWindow::on_cui_status_changed(f3_launcher_status status)
         checking = false;
         ui->buttonCheck->setText("Check!");
         ui->buttonMode->setEnabled(true);
-
+        ui->textDev->setReadOnly(false);
+        ui->textDevPath->setReadOnly(false);
+        ui->buttonSelectDev->setEnabled(true);
+        ui->buttonSelectPath->setEnabled(true);
     }
 }
 
@@ -283,6 +316,20 @@ void MainWindow::on_cui_error(f3_launcher_error_code errCode)
                                   "The device specified is not a USB device.\n"
                                   "Currently f3 does not support quick test on "
                                   "device that is not backed by USB (e.g. mmc, scsi).");
+            break;
+        case f3_launcher_no_fix:
+            QMessageBox::warning(this,"Probing Only",
+                             "f3fix was not found.\n"
+                             "You cannot fix the disk if its capacity is wrong.");
+            break;
+        case f3_launcher_no_report:
+            QMessageBox::warning(this,"No test result",
+                                 "No test has been completed. Please run a test first.");
+            break;
+        case f3_launcher_oversize:
+            QMessageBox::critical(this,"Fix failed",
+                                  "Cannot use detected capacity for fixing.\n"
+                                  "You may need to report this as a bug.");
             break;
         default:
             QMessageBox::warning(this,"Unknown error",
@@ -405,6 +452,8 @@ void MainWindow::on_timer_timeout()
     else
     {
         timer.stop();
+        if (timerTarget < 100 && userMode == 1 && ui->optionQuickTest->isChecked())
+            promptFix();
     }
 }
 

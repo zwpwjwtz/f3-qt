@@ -50,6 +50,7 @@ private:
     QString mountDisk(const QString& device);
     bool unmountDisk(const QString& mountPoint);
     bool sureToExit(bool manualClose);
+    void promptFix();
 
 protected:
     void closeEvent(QCloseEvent *);

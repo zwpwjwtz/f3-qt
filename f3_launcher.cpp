@@ -7,6 +7,7 @@
 #define F3_READ_COMMAND "f3read"
 #define F3_WRITE_COMMAND "f3write"
 #define F3_PROBE_COMMAND "f3probe"
+#define F3_FIX_COMMAND "f3fix"
 #define F3_OPTION_SHOW_PROGRESS "--show-progress=1"
 #define F3_OPTION_MIN_MEM "--min-memory"
 #define F3_OPTION_DESTRUCTIVE "--destructive"
@@ -26,6 +27,7 @@
 #define F3_RESULT_TAG_SIZE_MODULE "Module:"
 #define F3_RESULT_TAG_READ_SPEED2 "Read:"
 #define F3_RESULT_TAG_WRITE_SPEED2 "Write:"
+#define F3_RESULT_TAG_FIX_SUCCEED "was successfully fixed"
 #define F3_RESULT_FORMAT_TIME "s.zzz's'"
 #define F3_RESULT_FORMAT_TIME2 "m:ss\""
 
@@ -34,6 +36,7 @@
 #define F3_ERROR_TAG_NOT_DISK "is a partition of disk device"
 #define F3_ERROR_TAG_NOT_ROOT "Your user doesn't have access to"
 #define F3_ERROR_TAG_NOT_USB "is not backed by a USB device"
+#define F3_ERROR_TAG_OVERSIZE "Can't have a partition outside the disk"
 
 #define F3_DISK_PROBE_FILE "f3_qt_probe"
 #define F3_FILE_FILTER "*.h2w"
@@ -144,6 +147,10 @@ f3_launcher::f3_launcher()
     {
         emitError(f3_launcher_no_quick);
     }
+    if (version < 5.0 || !probeCommand(F3_FIX_COMMAND))
+    {
+        emitError(f3_launcher_no_fix);
+    }
     if (version <= 6.0)
     {
         emitError(f3_launcher_no_progress);
@@ -159,6 +166,7 @@ f3_launcher::f3_launcher()
     options["cache"] = "none";
     options["memory"] = "full";
     options["destructive"] = "no";
+    options["autofix"] = "no";
 
     stage = 0;
     connect(&f3_cui,
@@ -284,6 +292,12 @@ f3_launcher_report f3_launcher::getReport()
     if ((legacyMode && f3_cui_output.indexOf(F3_RESULT_TAG_READ_SPEED)) ||
         f3_cui_output.indexOf(F3_RESULT_TAG_READ_SPEED2))
         report.success = true;
+    else if (f3_cui_output.indexOf(F3_RESULT_TAG_FIX_SUCCEED))
+    {
+        report.success = true;
+        report.ReportedFree = "(Fixed)";
+        return report;
+    }
 
     if (legacyMode)
     {
@@ -331,6 +345,41 @@ f3_launcher_report f3_launcher::getReport()
 int f3_launcher::getStage()
 {
     return stage % 10;
+}
+
+void f3_launcher::startFix()
+{
+    if (devPath.isEmpty())
+        return;
+
+    QString size, blockSize;
+    f3_launcher_report report = getReport();
+    if (report.success ==false || report.BlockSize.isEmpty() || report.ActualFree.isEmpty())
+    {
+        emitError(f3_launcher_no_report);
+        return;
+    }
+    else
+    {
+        size = report.ActualFree.size();
+        blockSize = report.BlockSize;
+    }
+
+    qint64 sizeInByte = size.left(size.indexOf(' ')).toInt()
+                            * qPow(1000, f3_capacity_grade(size));
+    qint64 blockSizeInByte = blockSize.left(blockSize.indexOf(' ')).toInt()
+                                * qPow(1000, f3_capacity_grade(blockSize));
+    qint64 blockCount = sizeInByte / blockSizeInByte;
+
+    f3_cui_output.clear();
+    status = f3_launcher_running;
+    emit f3_launcher_status_changed(f3_launcher_running);
+    stage = 21;
+    emit f3_launcher_status_changed(f3_launcher_staged);
+    QStringList args;
+    args << "-l" << QString::number(blockCount);
+    args << devPath;
+    f3_cui.start(F3_FIX_COMMAND, args);
 }
 
 bool f3_launcher::probeCommand(QString command)
@@ -401,7 +450,7 @@ int f3_launcher::parseOutput()
         case 0:     //Exit normally
             f3_cui_output.append("\n").append(f3_cui.readAllStandardOutput());
             break;
-        case 1:     //No space || No memory || Not root || Not disk || Not USB
+        case 1:     //No space || No memory || Not root || Not disk || Not USB || Oversize
             f3_cui_output = f3_cui.readAllStandardOutput();
             f3_cui_output.append(f3_cui.readAllStandardError());
             if (f3_cui_output.indexOf(F3_ERROR_TAG_NO_SPACE) >= 0)
@@ -414,6 +463,8 @@ int f3_launcher::parseOutput()
                 emitError(f3_launcher_no_permission);
             else if (f3_cui_output.indexOf(F3_ERROR_TAG_NOT_USB) >= 0)
                 emitError(f3_launcher_not_USB);
+            else if (f3_cui_output.indexOf(F3_ERROR_TAG_OVERSIZE) >= 0)
+                emitError(f3_launcher_oversize);
             else
                 f3_cui_output.clear();
             break;
@@ -439,11 +490,11 @@ int f3_launcher::parseOutput()
 
 void f3_launcher::on_f3_cui_finished()
 {
+    timer.stop();
     if (stage == 0)
         return;
     else if (stage == 1)
     {
-        timer.stop();
         if (parseOutput() != 0)
         {
             stage = 0;
@@ -466,9 +517,12 @@ void f3_launcher::on_f3_cui_finished()
             timer.start();
         }
     }
+    else if (stage == 11 && options["autofix"] == "true")
+    {
+        startFix();
+    }
     else
     {
-        timer.stop();
         stage = 0;
 
         if (parseOutput() == 0)
