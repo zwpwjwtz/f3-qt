@@ -261,7 +261,7 @@ void MainWindow::on_cui_error(f3_launcher_error_code errCode)
     {
         case f3_launcher_no_cui:
             QMessageBox::critical(this,"No f3 program",
-                                  "Cannot found f3read/f3write.\n"
+                                  "Cannot find f3read/f3write.\n"
                                   "Please install f3 first.");
             exit(0);
         case f3_launcher_no_progress:
@@ -289,7 +289,7 @@ void MainWindow::on_cui_error(f3_launcher_error_code errCode)
         case f3_launcher_no_quick:
             QMessageBox::warning(this,"Legacy Mode Only",
                                  "f3probe was not found.\n"
-                                 "You cannot test under quick mode.");
+                                 "We are not able to test under quick mode.");
             break;
         case f3_launcher_cache_nofound:
             showStatus("No cached data found. Test from writing...");
@@ -320,7 +320,7 @@ void MainWindow::on_cui_error(f3_launcher_error_code errCode)
         case f3_launcher_no_fix:
             QMessageBox::warning(this,"Probing Only",
                              "f3fix was not found.\n"
-                             "You cannot fix the disk if its capacity is wrong.");
+                             "We are not able to fix the disk if its capacity is wrong.");
             break;
         case f3_launcher_no_report:
             QMessageBox::warning(this,"No test result",

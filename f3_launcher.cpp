@@ -395,7 +395,7 @@ bool f3_launcher::probeCommand(QString command)
 
 float f3_launcher::probeVersion()
 {
-    if (!probeCommand(F3_READ_COMMAND) || !probeCommand(F3_WRITE_COMMAND))
+    if (!probeCommand(F3_WRITE_COMMAND) || !probeCommand(F3_READ_COMMAND))
         return 0;
 
     QString output = f3_cui.readAllStandardError();
