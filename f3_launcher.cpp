@@ -31,6 +31,7 @@
 #define F3_RESULT_FORMAT_TIME "s.zzz's'"
 #define F3_RESULT_FORMAT_TIME2 "m:ss\""
 
+#define F3_ERROR_TAG_INACCESSIBLE "is damaged\n"
 #define F3_ERROR_TAG_NO_SPACE "No space!"
 #define F3_ERROR_TAG_NO_MEM "Out of memory"
 #define F3_ERROR_TAG_NOT_DISK "is a partition of disk device"
@@ -447,10 +448,15 @@ int f3_launcher::parseOutput()
     int exitCode = f3_cui.exitCode();
     switch(exitCode)
     {
-        case 0:     //Exit normally
-            f3_cui_output.append("\n").append(f3_cui.readAllStandardOutput());
+        case 0:
+            //Exit normally || Inaccessible
+            f3_cui_output.append(f3_cui.readAllStandardOutput());
+            if (f3_cui_output.indexOf(F3_ERROR_TAG_INACCESSIBLE) >= 0)
+                emitError(f3_launcher_damaged);
             break;
-        case 1:     //No space || No memory || Not root || Not disk || Not USB || Oversize
+        case 1:
+            //No space || No memory || Not root || Not disk ||
+            //Not USB || Oversize
             f3_cui_output = f3_cui.readAllStandardOutput();
             f3_cui_output.append(f3_cui.readAllStandardError());
             if (f3_cui_output.indexOf(F3_ERROR_TAG_NO_SPACE) >= 0)

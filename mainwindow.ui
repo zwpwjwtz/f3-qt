@@ -301,7 +301,7 @@
      <rect>
       <x>20</x>
       <y>110</y>
-      <width>351</width>
+      <width>361</width>
       <height>91</height>
      </rect>
     </property>
@@ -310,7 +310,7 @@
       <rect>
        <x>175</x>
        <y>30</y>
-       <width>170</width>
+       <width>181</width>
        <height>61</height>
       </rect>
      </property>
@@ -369,7 +369,7 @@ QProgressBar::chunk {background-color: rgb(75, 226, 110); border-radius: 3px;}</
       <rect>
        <x>0</x>
        <y>24</y>
-       <width>351</width>
+       <width>361</width>
        <height>16</height>
       </rect>
      </property>
@@ -380,7 +380,7 @@ QProgressBar::chunk {background-color: rgb(75, 226, 110); border-radius: 3px;}</
     <widget class="QPushButton" name="buttonMode_2">
      <property name="geometry">
       <rect>
-       <x>335</x>
+       <x>340</x>
        <y>0</y>
        <width>16</width>
        <height>16</height>
@@ -425,7 +425,7 @@ QProgressBar::chunk {background-color: rgb(75, 226, 110); border-radius: 3px;}</
        <x>10</x>
        <y>10</y>
        <width>331</width>
-       <height>18</height>
+       <height>20</height>
       </rect>
      </property>
      <property name="text">

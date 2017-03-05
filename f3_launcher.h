@@ -31,6 +31,7 @@ enum f3_launcher_error_code
     f3_launcher_no_fix = 139,
     f3_launcher_no_report = 140,
     f3_launcher_oversize = 141,
+    f3_launcher_damaged = 142,
     f3_launcher_unknownError = 255,
 };
 
