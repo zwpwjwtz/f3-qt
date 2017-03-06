@@ -334,7 +334,7 @@ void MainWindow::on_cui_error(f3_launcher_error_code errCode)
         case f3_launcher_damaged:
             QMessageBox::critical(this,"Device inaccessible",
                                   "Cannot access the specified device.\n"
-                                  "You may not have the right permission to
+                                  "You may not have the right permission to"
                                   "read and write to it, or it has been damaged.");
             break;
         default:
