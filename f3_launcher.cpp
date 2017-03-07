@@ -1,7 +1,7 @@
 #include "f3_launcher.h"
-#include <QtMath>
 #include <QDir>
 #include <QFile>
+#include <qmath.h>
 #include <QTime>
 
 #define F3_READ_COMMAND "f3read"
