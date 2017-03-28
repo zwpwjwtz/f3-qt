@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
         on_cui_error(cuiError);
 
     ui->setupUi(this);
+    ui->stackedWidget->setCurrentIndex(0);
     connect(&cui,
             SIGNAL(f3_launcher_status_changed(f3_launcher_status)),
             this,
@@ -64,7 +65,7 @@ void MainWindow::showStatus(const QString &string)
 void MainWindow::clearStatus()
 {
     ui->statusBar->showMessage("Ready");
-    ui->groupResult->hide();
+    ui->frameResult->hide();
     ui->labelSpace->clear();
     ui->labelSpeed->clear();
     ui->progressBar->setValue(0);
@@ -179,7 +180,7 @@ void MainWindow::on_cui_status_changed(f3_launcher_status status)
             ui->textDevPath->setReadOnly(true);
             ui->buttonSelectDev->setEnabled(false);
             ui->buttonSelectPath->setEnabled(false);
-            ui->groupProgress->show();
+            ui->frameProgress->show();
             break;
         case f3_launcher_finished:
         {
@@ -206,7 +207,7 @@ void MainWindow::on_cui_status_changed(f3_launcher_status status)
                                     .append("\nWrite speed: ")
                                     .append(report.WritingSpeed)
                                     );
-            ui->groupResult->show();
+            ui->frameResult->show();
             ui->progressBar->setMaximum(100);
             showCapacity(report.availability * 100);
             break;
@@ -243,7 +244,7 @@ void MainWindow::on_cui_status_changed(f3_launcher_status status)
         {
             if (!ui->optionQuickTest->isChecked())
                 unmountDisk(mountPoint);
-            ui->groupProgress->hide();
+            ui->frameProgress->hide();
         }
         checking = false;
         ui->buttonCheck->setText("Check!");
@@ -473,11 +474,11 @@ void MainWindow::on_buttonMode_clicked()
     if (this->userMode == 0)
     {
         this->userMode = 1;
-        showStatus("Switched to advacned mode.");
+        showStatus("Switched to advanced mode.");
         ui->stackedWidget->setCurrentIndex(1);
         ui->buttonMode->setIcon(QIcon(":/icon/back.png"));
         ui->buttonMode->setToolTip("Basic Mode");
-        ui->groupProgress->hide();
+        ui->frameProgress->hide();
     }
     else
     {
@@ -486,10 +487,10 @@ void MainWindow::on_buttonMode_clicked()
         ui->stackedWidget->setCurrentIndex(0);
         ui->buttonMode->setIcon(QIcon(":/icon/advanced.png"));
         ui->buttonMode->setToolTip("Advanced Mode");
-        ui->groupProgress->show();
+        ui->frameProgress->show();
     }
     if (cui.getStatus() != f3_launcher_finished)
-        ui->groupResult->hide();
+        ui->frameResult->hide();
 }
 
 void MainWindow::on_buttonSelectDev_clicked()
@@ -529,5 +530,5 @@ void MainWindow::on_optionDestructive_clicked()
 
 void MainWindow::on_buttonMode_2_clicked()
 {
-    ui->groupResult->hide();
+    ui->frameResult->hide();
 }

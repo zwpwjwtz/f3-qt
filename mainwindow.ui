@@ -28,7 +28,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="pageBasic">
      <widget class="QLineEdit" name="textDevPath">
@@ -110,7 +110,7 @@
        <rect>
         <x>40</x>
         <y>110</y>
-        <width>351</width>
+        <width>361</width>
         <height>80</height>
        </rect>
       </property>
@@ -296,7 +296,7 @@
      </property>
     </widget>
    </widget>
-   <widget class="QGroupBox" name="groupResult">
+   <widget class="QFrame" name="frameResult">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -304,6 +304,15 @@
       <width>361</width>
       <height>91</height>
      </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
     </property>
     <widget class="QLabel" name="labelSpeed">
      <property name="geometry">
@@ -410,14 +419,20 @@ QProgressBar::chunk {background-color: rgb(75, 226, 110); border-radius: 3px;}</
      </property>
     </widget>
    </widget>
-   <widget class="QGroupBox" name="groupProgress">
+   <widget class="QFrame" name="frameProgress">
     <property name="geometry">
      <rect>
       <x>20</x>
       <y>110</y>
-      <width>351</width>
+      <width>361</width>
       <height>91</height>
      </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
     </property>
     <widget class="QLabel" name="labelProgress">
      <property name="geometry">
@@ -447,8 +462,8 @@ QProgressBar::chunk {background-color: rgb(75, 226, 110); border-radius: 3px;}</
    <zorder>buttonExit</zorder>
    <zorder>buttonCheck</zorder>
    <zorder>frameNav</zorder>
-   <zorder>groupProgress</zorder>
-   <zorder>groupResult</zorder>
+   <zorder>frameProgress</zorder>
+   <zorder>frameResult</zorder>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="styleSheet">
