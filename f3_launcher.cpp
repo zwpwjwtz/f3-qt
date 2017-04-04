@@ -138,7 +138,14 @@ QString f3_operation_speed(const QString& operation,qint64 blockSize)
 f3_launcher::f3_launcher()
 {
     errCode = f3_launcher_ok;
+
+    f3_path = "./";
     float version = probeVersion();
+    if (version == 0)
+    {
+        f3_path = "";
+        version = probeVersion();
+    }
     if (version == 0)
     {
         emitError(f3_launcher_no_cui);
@@ -385,7 +392,7 @@ void f3_launcher::startFix()
 
 bool f3_launcher::probeCommand(QString command)
 {
-    f3_cui.start(command);
+    f3_cui.start(command.prepend(f3_path));
     f3_cui.waitForStarted();
     f3_cui.waitForFinished();
     if (f3_cui.exitCode() == 255)

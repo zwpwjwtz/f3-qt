@@ -74,13 +74,15 @@ signals:
 
 private:
     QProcess f3_cui;
+    QTimer timer;
+    QString devPath;
+    QString f3_path;
+    QMap<QString,QString> options;
+    bool showProgress;
+    int stage;
     f3_launcher_status status;
     f3_launcher_error_code errCode;
-    bool showProgress;
-    QString devPath;
-    int stage;
-    QTimer timer;
-    QMap<QString,QString> options;
+
     void emitError(f3_launcher_error_code errorCode);
     bool probeCommand(QString command);
     float probeVersion();
