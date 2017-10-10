@@ -2,3 +2,4 @@ f3-qt
 *.o
 moc*
 ui*.h
+*.pro.user

@@ -1,0 +1,17 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Name=F3-qt
+Type=Application
+Terminal=false
+Exec=f3-qt
+Icon=applications-utilities
+Categories=System;
+Comment=Detect flash cards capacity with f3 utility
+Comment[fr]=Détecte la capacité des cartes flash avec l'utilitaire f3
+Comment[zh_CN]=使用f3测试闪存卡的容量
+Comment[zh_TW]=使用f3實用程序檢測閃存卡容量
+GenericName=Flash capacity test
+GenericName[fr]=Test de capacité de flash
+GenericName[zh_CN]=闪存容量测试
+GenericName[zh_TW]=閃存容量測試
+Keywords=system;disk;usb
