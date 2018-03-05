@@ -452,15 +452,12 @@ QProgressBar::chunk {background-color: rgb(75, 226, 110); border-radius: 3px;}</
       <rect>
        <x>20</x>
        <y>50</y>
-       <width>321</width>
+       <width>301</width>
        <height>16</height>
       </rect>
      </property>
-     <property name="maximum">
-      <number>10000</number>
-     </property>
      <property name="format">
-      <string>%v/%m (%p%)</string>
+      <string> </string>
      </property>
     </widget>
     <widget class="QLabel" name="labelProgressSpin">
@@ -477,6 +474,22 @@ QProgressBar::chunk {background-color: rgb(75, 226, 110); border-radius: 3px;}</
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelProgressValue">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>50</y>
+       <width>41</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>0%</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </widget>

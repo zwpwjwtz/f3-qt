@@ -24,9 +24,9 @@ private slots:
     void on_buttonExit_clicked();
     void on_buttonSelectPath_clicked();
     void on_buttonHelp_clicked();
-    void on_timer_timeout();
-    void on_cui_status_changed(f3_launcher_status status);
-    void on_cui_error(f3_launcher_error_code errCode);
+    void on_timerTimeout();
+    void on_cuiStatusChanged(f3_launcher_status status);
+    void on_cuiError(f3_launcher_error_code errCode);
     void on_buttonMode_clicked();
     void on_buttonSelectDev_clicked();
     void on_optionQuickTest_clicked();
@@ -46,6 +46,7 @@ private:
 
     void showStatus(const QString& string);
     void clearStatus();
+    void showProgress(int progress10K);
     void showCapacity(int value);
     QString mountDisk(const QString& device);
     bool unmountDisk(const QString& mountPoint);

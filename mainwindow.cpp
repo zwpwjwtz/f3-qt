@@ -28,22 +28,22 @@ MainWindow::MainWindow(QWidget *parent) :
 {    
     f3_launcher_error_code cuiError = cui.getErrCode();
     if (cuiError != 0)
-        on_cui_error(cuiError);
+        on_cuiError(cuiError);
 
     ui->setupUi(this);
     ui->stackedWidget->setCurrentIndex(0);
     connect(&cui,
             SIGNAL(f3_launcher_status_changed(f3_launcher_status)),
             this,
-            SLOT(on_cui_status_changed(f3_launcher_status)));
+            SLOT(on_cuiStatusChanged(f3_launcher_status)));
     connect(&cui,
             SIGNAL(f3_launcher_error(f3_launcher_error_code)),
             this,
-            SLOT(on_cui_error(f3_launcher_error_code)));
+            SLOT(on_cuiError(f3_launcher_error_code)));
     connect(&timer,
             SIGNAL(timeout()),
             this,
-            SLOT(on_timer_timeout()));
+            SLOT(on_timerTimeout()));
     checking = false;
     this->userMode = 0;
     move((QApplication::desktop()->width() - width()) / 2,
@@ -68,8 +68,26 @@ void MainWindow::clearStatus()
     ui->frameResult->hide();
     ui->labelSpace->clear();
     ui->labelSpeed->clear();
-    ui->progressBar->setValue(0);
+    showProgress(0);
     ui->labelProgress->setText("Progress:");
+}
+
+void MainWindow::showProgress(int progress10K)
+{
+    if (progress10K < 0)
+    {
+        ui->progressBar->setMaximum(0);
+        ui->progressBar->setValue(0);
+        ui->labelProgressValue->setText("");
+        return;
+    }
+
+    if (ui->progressBar->maximum() <= 0)
+        ui->progressBar->setMaximum(10000);
+    ui->progressBar->setValue(progress10K);
+    ui->labelProgressValue->setText(QString("%1%").
+                                    arg(progress10K / 100.0f));
+    ui->progressBar->repaint();
 }
 
 void MainWindow::showCapacity(int value)
@@ -166,9 +184,8 @@ void MainWindow::promptFix()
     cui.startFix();
 }
 
-void MainWindow::on_cui_status_changed(f3_launcher_status status)
+void MainWindow::on_cuiStatusChanged(f3_launcher_status status)
 {
-    char chSpin = ui->labelProgressSpin->text().data()[0].toAscii();
     QString qsSpinNext;
     switch(status)
     {
@@ -210,14 +227,14 @@ void MainWindow::on_cui_status_changed(f3_launcher_status status)
                                     .append(report.WritingSpeed)
                                     );
             ui->frameResult->show();
-            ui->progressBar->setMaximum(10000);
+            showProgress(0);
             showCapacity(report.availability * 100);
             break;
         }
         case f3_launcher_stopped:
             showStatus("Stopped.");
-            ui->progressBar->setMaximum(10000);
-            ui->progressBar->setValue(0);
+            ui->progressBar->setMaximum(100);
+            showProgress(0);
             ui->labelProgressSpin->setText("!");
             break;
         case f3_launcher_staged:
@@ -225,15 +242,13 @@ void MainWindow::on_cui_status_changed(f3_launcher_status status)
             QString progressText;
             progressText.sprintf("Progress:(Stage %d)",cui.getStage());
             ui->labelProgress->setText(progressText);
-            ui->progressBar->setMaximum(0);
-            ui->progressBar->setValue(0);
+            showProgress(-1);
             ui->labelProgressSpin->setText("?");
             break;
         }
         case f3_launcher_progressed:
-            ui->progressBar->setMaximum(10000);
-            ui->progressBar->setValue(cui.progress10K);
-            switch(chSpin){
+            showProgress(cui.progress10K);
+            switch(ui->labelProgressSpin->text()[0].toLatin1()){
                 case '|': qsSpinNext = "/"; break;
                 case '/': qsSpinNext = "---"; break;
                 case '-': qsSpinNext = "\\"; break;
@@ -268,7 +283,7 @@ void MainWindow::on_cui_status_changed(f3_launcher_status status)
     }
 }
 
-void MainWindow::on_cui_error(f3_launcher_error_code errCode)
+void MainWindow::on_cuiError(f3_launcher_error_code errCode)
 {
     switch(errCode)
     {
@@ -461,7 +476,7 @@ void MainWindow::on_buttonSelectPath_clicked()
 
 }
 
-void MainWindow::on_timer_timeout()
+void MainWindow::on_timerTimeout()
 {
     int value = ui->capacityBar->value();
     if (value < timerTarget)
