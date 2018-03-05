@@ -66,7 +66,7 @@ public:
     QString getOption(QString key);
     void startFix();
     QString f3_cui_output;
-    int progress;
+    int progress10K;
 
 signals:
     void f3_launcher_status_changed(f3_launcher_status status);
