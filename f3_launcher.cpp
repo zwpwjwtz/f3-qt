@@ -185,7 +185,7 @@ f3_launcher::f3_launcher()
             SIGNAL(timeout()),
             this,
             SLOT(on_timer_timeout()));
-    timer.setInterval(1500);
+    timer.setInterval(200);
 
 }
 
@@ -229,7 +229,7 @@ void f3_launcher::startCheck(QString devPath)
         stopCheck();
 
     f3_cui_output.clear();
-    progress = 0;
+    progress10K = 0;
     status = f3_launcher_running;
     emit f3_launcher_status_changed(f3_launcher_running);
 
@@ -517,7 +517,7 @@ void f3_launcher::on_f3_cui_finished()
         }
 
         stage = 2;
-        progress = 0;
+        progress10K = 0;
         QStringList args;
         if (showProgress)
             args << QString(F3_OPTION_SHOW_PROGRESS);
@@ -560,9 +560,9 @@ void f3_launcher::on_timer_timeout()
     if (p >= 0)
     {
         int p2 = temp.indexOf("... ", p - 7);
-        int percentage = temp.mid(p2 + 4, p - p2 - 4).trimmed().toFloat();
-        if (percentage > progress)
-            progress = percentage;
+        float percentage10K = temp.mid(p2 + 4, p - p2 - 4).trimmed().toFloat() * 100.0f;
+        if (percentage10K > progress10K)
+            progress10K = percentage10K;
         emit f3_launcher_status_changed(f3_launcher_progressed);
     }
     f3_cui_output.append(temp);

@@ -168,6 +168,8 @@ void MainWindow::promptFix()
 
 void MainWindow::on_cui_status_changed(f3_launcher_status status)
 {
+    char chSpin = ui->labelProgressSpin->text().data()[0].toAscii();
+    QString qsSpinNext;
     switch(status)
     {
         case f3_launcher_ready:
@@ -208,14 +210,15 @@ void MainWindow::on_cui_status_changed(f3_launcher_status status)
                                     .append(report.WritingSpeed)
                                     );
             ui->frameResult->show();
-            ui->progressBar->setMaximum(100);
+            ui->progressBar->setMaximum(10000);
             showCapacity(report.availability * 100);
             break;
         }
         case f3_launcher_stopped:
             showStatus("Stopped.");
-            ui->progressBar->setMaximum(100);
+            ui->progressBar->setMaximum(10000);
             ui->progressBar->setValue(0);
+            ui->labelProgressSpin->setText("!");
             break;
         case f3_launcher_staged:
         {
@@ -224,11 +227,20 @@ void MainWindow::on_cui_status_changed(f3_launcher_status status)
             ui->labelProgress->setText(progressText);
             ui->progressBar->setMaximum(0);
             ui->progressBar->setValue(0);
+            ui->labelProgressSpin->setText("?");
             break;
         }
         case f3_launcher_progressed:
-            ui->progressBar->setMaximum(100);
-            ui->progressBar->setValue(cui.progress);
+            ui->progressBar->setMaximum(10000);
+            ui->progressBar->setValue(cui.progress10K);
+            switch(chSpin){
+                case '|': qsSpinNext = "/"; break;
+                case '/': qsSpinNext = "---"; break;
+                case '-': qsSpinNext = "\\"; break;
+                case '\\': qsSpinNext = "|"; break;
+                default: qsSpinNext = "|"; break;
+            }
+            ui->labelProgressSpin->setText(qsSpinNext);
             break;
     }
     if (status == f3_launcher_running ||
