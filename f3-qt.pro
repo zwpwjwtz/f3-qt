@@ -35,3 +35,7 @@ DISTFILES +=
 
 RESOURCES += \
     icon.qrc
+
+target.path = $${PREFIX}/bin/
+
+INSTALLS += target
