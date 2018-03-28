@@ -273,7 +273,7 @@ void f3_launcher::startCheck(QString devPath)
         emit f3_launcher_status_changed(f3_launcher_staged);
     }
     args << devPath;
-    f3_cui.start(command, args);
+    f3_cui.start(command.prepend(f3_path), args);
 
     if (showProgress)
     {
@@ -387,7 +387,7 @@ void f3_launcher::startFix()
     QStringList args;
     args << "-l" << QString::number(blockCount);
     args << devPath;
-    f3_cui.start(F3_FIX_COMMAND, args);
+    f3_cui.start(QString(F3_FIX_COMMAND).prepend(f3_path), args);
 }
 
 bool f3_launcher::probeCommand(QString command)
@@ -522,7 +522,7 @@ void f3_launcher::on_f3_cui_finished()
         if (showProgress)
             args << QString(F3_OPTION_SHOW_PROGRESS);
         args << devPath;
-        f3_cui.start(QString(F3_READ_COMMAND),args);
+        f3_cui.start(QString(F3_READ_COMMAND).prepend(f3_path),args);
         emit f3_launcher_status_changed(f3_launcher_staged);
 
         if (showProgress)
