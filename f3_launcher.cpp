@@ -395,7 +395,8 @@ bool f3_launcher::probeCommand(QString command)
     f3_cui.start(command.prepend(f3_path));
     f3_cui.waitForStarted();
     f3_cui.waitForFinished();
-    if (f3_cui.exitCode() == 255)
+    if (f3_cui.exitCode() == 255 || 
+        f3_cui.error() == QProcess::FailedToStart)
         return false;
     else
         return true;
