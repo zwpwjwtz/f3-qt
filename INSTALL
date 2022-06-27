@@ -38,6 +38,10 @@ The built executable "f3-qt" can be launched directly (either from terminal or f
 
 **To make the program function properly, you need also install the latest version of f3.**
 
+
+Install with package manager
+-------
+
 * Archlinux
 
   Using an AUR helper such as "yay":
