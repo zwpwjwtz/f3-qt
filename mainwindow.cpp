@@ -65,11 +65,11 @@ void MainWindow::showStatus(const QString &string)
 void MainWindow::clearStatus()
 {
     ui->statusBar->showMessage("Ready");
-    ui->frameResult->hide();
     ui->labelSpace->clear();
     ui->labelSpeed->clear();
-    showProgress(0);
     ui->labelProgress->setText("Progress:");
+    showProgress(0);
+    showProgressPage(false);
 }
 
 void MainWindow::showProgress(int progress10K)
@@ -105,6 +105,22 @@ void MainWindow::showCapacity(int value)
         return;
     timer.setInterval(1000 / value);
     timer.start();
+}
+
+void MainWindow::showProgressPage(bool visible)
+{
+    if (visible)
+        ui->stackedWidget->setCurrentIndex(2);
+    else if (ui->stackedWidget->currentIndex() == 2)
+        ui->stackedWidget->setCurrentIndex(userMode == 1 ? 1 : 0);
+}
+
+void MainWindow::showResultPage(bool visible)
+{
+    if (visible)
+        ui->stackedWidget->setCurrentIndex(3);
+    else
+        ui->stackedWidget->setCurrentIndex(userMode == 1 ? 1 : 0);
 }
 
 QString MainWindow::mountDisk(const QString& device)
@@ -199,7 +215,7 @@ void MainWindow::on_cuiStatusChanged(f3_launcher_status status)
             ui->textDevPath->setReadOnly(true);
             ui->buttonSelectDev->setEnabled(false);
             ui->buttonSelectPath->setEnabled(false);
-            ui->frameProgress->show();
+            showProgressPage(true);
             break;
         case f3_launcher_finished:
         {
@@ -226,21 +242,19 @@ void MainWindow::on_cuiStatusChanged(f3_launcher_status status)
                                     .append("\nWrite speed: ")
                                     .append(report.WritingSpeed)
                                     );
-            ui->frameResult->show();
             showProgress(0);
             showCapacity(report.availability * 100);
+            showResultPage(true);
             break;
         }
         case f3_launcher_stopped:
             showStatus("Stopped.");
-            ui->progressBar->setMaximum(100);
             showProgress(0);
             ui->labelProgressSpin->setText("!");
             break;
         case f3_launcher_staged:
         {
-            QString progressText;
-            progressText.sprintf("Progress:(Stage %d)",cui.getStage());
+            QString progressText = QString("Progress:(Stage %1)").arg(cui.getStage());
             ui->labelProgress->setText(progressText);
             showProgress(-1);
             ui->labelProgressSpin->setText("?");
@@ -271,9 +285,9 @@ void MainWindow::on_cuiStatusChanged(f3_launcher_status status)
         {
             if (!ui->optionQuickTest->isChecked())
                 unmountDisk(mountPoint);
-            ui->frameProgress->hide();
         }
         checking = false;
+        showProgressPage(false);
         ui->buttonCheck->setText("Check!");
         ui->buttonMode->setEnabled(true);
         ui->textDev->setReadOnly(false);
@@ -505,7 +519,6 @@ void MainWindow::on_buttonMode_clicked()
         ui->stackedWidget->setCurrentIndex(1);
         ui->buttonMode->setIcon(QIcon(":/icon/back.png"));
         ui->buttonMode->setToolTip("Basic Mode");
-        ui->frameProgress->hide();
     }
     else
     {
@@ -514,10 +527,8 @@ void MainWindow::on_buttonMode_clicked()
         ui->stackedWidget->setCurrentIndex(0);
         ui->buttonMode->setIcon(QIcon(":/icon/advanced.png"));
         ui->buttonMode->setToolTip("Advanced Mode");
-        ui->frameProgress->show();
     }
-    if (cui.getStatus() != f3_launcher_finished)
-        ui->frameResult->hide();
+    showProgressPage(false);
 }
 
 void MainWindow::on_buttonSelectDev_clicked()
@@ -555,7 +566,7 @@ void MainWindow::on_optionDestructive_clicked()
     ui->optionLessMem->setChecked(false);
 }
 
-void MainWindow::on_buttonMode_2_clicked()
+void MainWindow::on_buttonHideResult_clicked()
 {
-    ui->frameResult->hide();
+    showResultPage(false);
 }

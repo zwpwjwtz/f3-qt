@@ -32,7 +32,7 @@ private slots:
     void on_optionQuickTest_clicked();
     void on_optionLessMem_clicked();
     void on_optionDestructive_clicked();
-    void on_buttonMode_2_clicked();
+    void on_buttonHideResult_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -48,6 +48,8 @@ private:
     void clearStatus();
     void showProgress(int progress10K);
     void showCapacity(int value);
+    void showProgressPage(bool visible);
+    void showResultPage(bool visible);
     QString mountDisk(const QString& device);
     bool unmountDisk(const QString& mountPoint);
     bool sureToExit(bool manualClose);
