@@ -19,7 +19,7 @@ There are 2 ways to build from source:
   1. Download and install qmake. There might be other dependencies needed for qmake. For example, under Ubuntu you can:
 
             sudo apt-get install g++
-            sudo apt-get install qt5-default
+            sudo apt-get install qtbase5-dev
 
   2. Switch to the source directory and run qmake:
     
