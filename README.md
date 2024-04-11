@@ -2,6 +2,8 @@
 
 This is a simple GUI for F3 - [Fight Flash Fraud](https://github.com/AltraMayor/f3).
 
+![](./screenshot.png)
+
 No guarantee for data safety. Please do backups before operation.
 
 Licensed under GNU GPLv3. The licence text can be found in file [LICENSE](./LICENSE).
