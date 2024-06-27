@@ -254,7 +254,7 @@ void MainWindow::on_cuiStatusChanged(f3_launcher_status status)
             break;
         case f3_launcher_staged:
         {
-            QString progressText = QString("Progress:(Stage %1)").arg(cui.getStage());
+            QString progressText = QString("Progress:(Stage %1 of 2)").arg(cui.getStage());
             ui->labelProgress->setText(progressText);
             showProgress(-1);
             ui->labelProgressSpin->setText("?");
