@@ -71,7 +71,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -80,10 +80,10 @@
     <widget class="QTextBrowser" name="textAbout">
      <property name="geometry">
       <rect>
-       <x>-5</x>
-       <y>-5</y>
+       <x>0</x>
+       <y>0</y>
        <width>381</width>
-       <height>171</height>
+       <height>160</height>
       </rect>
      </property>
     </widget>
@@ -115,6 +115,24 @@
      </property>
      <property name="textInteractionFlags">
       <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_3">
+    <attribute name="title">
+     <string>Help</string>
+    </attribute>
+    <widget class="QTextBrowser" name="textHelp">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>381</width>
+       <height>160</height>
+      </rect>
+     </property>
+     <property name="openLinks">
+      <bool>false</bool>
      </property>
     </widget>
    </widget>
