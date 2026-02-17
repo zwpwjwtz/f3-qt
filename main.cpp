@@ -1,5 +1,9 @@
 #include "mainwindow.h"
 #include <QtWidgets/QApplication>
+#include <QtCore/QTranslator>
+
+
+QTranslator appTranslator;
 
 int main(int argc, char *argv[])
 {
@@ -11,6 +15,12 @@ int main(int argc, char *argv[])
     }
 
     QApplication a(argc, argv);
+
+    QLocale currentLocale = QLocale::system();
+    if (appTranslator.load(QString(":/translations/f3-qt_").
+                           append(currentLocale.name())))
+        a.installTranslator(&appTranslator);
+
     MainWindow w;
     w.show();
 

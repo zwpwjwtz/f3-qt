@@ -15,9 +15,9 @@ DEFINES += QT_DISABLE_DEPRECATED_UP_TO=0x050F00
 
 VER_MAJ = 2
 VER_MIN = 2
-VER_PAT = 0
-VERSION = 2.2.0
-VERSION_PE_HEADER = 2.2.0
+VER_PAT = 1
+VERSION = 2.2.1
+VERSION_PE_HEADER = 2.2.1
 
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
@@ -36,8 +36,13 @@ FORMS    += mainwindow.ui \
 DISTFILES +=
 
 RESOURCES += \
-    icon.qrc
+    icon.qrc \
+    translation.qrc
 
 target.path = $${PREFIX}/bin/
+
+TRANSLATIONS += \
+    translations/f3-qt_en_US.ts
+    translations/f3-qt_zh_CN.ts
 
 INSTALLS += target
